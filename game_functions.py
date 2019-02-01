@@ -5,7 +5,7 @@ from bullet import Bullet
 from alien import Alien
 
 
-def check_events(ai_settings, screen, stats, play_button, ship, aliens,  bullets):
+def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens,  bullets):
     '''Respond to keypresses and mouse events.'''
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -16,11 +16,11 @@ def check_events(ai_settings, screen, stats, play_button, ship, aliens,  bullets
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(ai_settings, screen, stats,  play_button,
+            check_play_button(ai_settings, screen, stats, sb, play_button,
                               ship, aliens, bullets, mouse_x, mouse_y)
 
 
-def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y):
+def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y):
     '''Start a new game when the player clicks play'''
     play_button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if play_button_clicked and not stats.game_active:
@@ -32,7 +32,7 @@ def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bul
         # Reset the game statistics
         stats.reset_stats()
         stats.game_active = True
-
+        sb.prep_score()
         # Empty the list of aliens and bullets
         aliens.empty()
         bullets.empty()
@@ -214,9 +214,17 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         for aliens in collision.values():
             stats.score += ai_settings.alien_points
             sb.prep_score()
+        check_high_score(stats, sb)
 
     if len(aliens) == 0:
         # Destroy existing bullets, speed up game, and create a new fleet
         bullets.empty()
         ai_settings.increase_speed()
         create_fleet(ai_settings, screen, ship, aliens)
+
+
+def check_high_score(stats, sb):
+    '''Check to see if there's a new high score'''
+    if stats.score > stats.high_score:
+        stats.high_score = stats.score
+        sb.prep_high_score()
