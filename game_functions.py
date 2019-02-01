@@ -51,7 +51,7 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def update_bullets(aliens, bullets):
+def update_bullets(ai_settings, screen, ship, aliens, bullets):
     '''Update position of bullets and get rid of old bullets'''
     bullets.update()
     # get rid of the bullets that have disappeared
@@ -59,9 +59,7 @@ def update_bullets(aliens, bullets):
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
-    # check for any bullets that have hit aliens
-    # if so, get rif of the bullet and the alien
-    collision = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    check_bullet_alie_collisions(ai_settings, screen, ship, aliens, bullets)
 
 
 def fire_bullet(ai_settings, screen, ship, bullets):
@@ -134,3 +132,15 @@ def change_fleet_directions(ai_settings, aliens):
         alien.rect.y += ai_settings.fleet_drop_speed
 
     ai_settings.fleet_direction *= -1
+
+
+def check_bullet_alie_collisions(ai_settings, screen, ship, aliens, bullets):
+    '''Respond to bullet-alien collisions'''
+    # check for any bullets that have hit aliens
+    # if so, get rif of the bullet and the alien
+    collision = pygame.sprite.groupcollide(bullets, aliens, True, True)
+
+    if len(aliens) == 0:
+        # Destroy existing bullets and create a new fleet
+        bullets.empty()
+        create_fleet(ai_settings, screen, ship, aliens)
