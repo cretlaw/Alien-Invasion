@@ -32,7 +32,12 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
         # Reset the game statistics
         stats.reset_stats()
         stats.game_active = True
+
+        # Reset the scoreboard images
         sb.prep_score()
+        sb.prep_high_score()
+        sb.prep_level()
+
         # Empty the list of aliens and bullets
         aliens.empty()
         bullets.empty()
@@ -220,6 +225,11 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         # Destroy existing bullets, speed up game, and create a new fleet
         bullets.empty()
         ai_settings.increase_speed()
+
+        # increase level
+        stats.level += 1
+        sb.prep_level()
+
         create_fleet(ai_settings, screen, ship, aliens)
 
 
