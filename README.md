@@ -1,5 +1,5 @@
 # Alien-Invasion
-Built with python 3
+Built with python 3 and pygame
 
 In Alien Invasion, the player controls a ship that appears at
 the bottom center of the screen. The player can move the ship
